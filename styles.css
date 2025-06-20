@@ -1,8 +1,1049 @@
-/*
+/* Timing Plugin Styles */
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+:root {
+  --timing-primary: #3b82f6;
+  --timing-success: #22c55e;
+  --timing-warning: #f59e0b;
+  --timing-error: #ef4444;
+  --timing-neutral: #6b7280;
+  
+  --timing-bg-primary: #f8fafc;
+  --timing-bg-secondary: #f1f5f9;
+  --timing-border: #e2e8f0;
+  --timing-text: #1e293b;
+  --timing-text-muted: #64748b;
+}
 
-If your plugin does not need CSS, delete this file.
+/* Ribbon Icon States */
+.timing-active {
+  color: var(--timing-success) !important;
+}
 
-*/
+.timing-warning {
+  color: var(--timing-warning) !important;
+}
+
+.timing-error {
+  color: var(--timing-error) !important;
+}
+
+.timing-syncing {
+  color: var(--timing-primary) !important;
+  animation: timing-pulse 2s ease-in-out infinite;
+}
+
+.timing-disabled {
+  color: var(--timing-neutral) !important;
+  opacity: 0.5;
+}
+
+@keyframes timing-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Connection Status */
+.timing-connection-status {
+  padding: 1rem;
+  background: var(--timing-bg-primary);
+  border: 1px solid var(--timing-border);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* Settings Sections */
+h3 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: var(--timing-text);
+  border-bottom: 1px solid var(--timing-border);
+  padding-bottom: 0.5rem;
+}
+
+/* Button Styles */
+.mod-warning {
+  background-color: var(--timing-error) !important;
+  color: white !important;
+}
+
+/* Data Preview Modal */
+.modal.timing-data-preview-modal,
+.modal-container .timing-data-preview-modal {
+  width: 90vw !important;
+  max-width: 1200px !important;
+  height: 85vh !important;
+  max-height: 800px !important;
+  min-width: 800px !important;
+  min-height: 600px !important;
+}
+
+.timing-data-preview-modal .modal-content {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  padding: 1.5rem !important;
+  overflow-y: auto;
+}
+
+.modal-header {
+  border-bottom: 1px solid var(--timing-border);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-subtitle {
+  color: var(--timing-text-muted);
+  margin: 0.5rem 0 0 0;
+  font-size: 0.9rem;
+}
+
+/* Summary Cards */
+.timing-summary-cards {
+  margin-bottom: 2rem;
+}
+
+.summary-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.summary-card {
+  background: var(--timing-bg-primary);
+  border: 1px solid var(--timing-border);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.summary-card-primary {
+  border-color: var(--timing-primary);
+  background: linear-gradient(135deg, var(--timing-primary)10, transparent);
+}
+
+.summary-card-secondary {
+  border-color: var(--timing-neutral);
+}
+
+.summary-card-success {
+  border-color: var(--timing-success);
+  background: linear-gradient(135deg, var(--timing-success)10, transparent);
+}
+
+.summary-card-accent {
+  border-color: var(--timing-warning);
+  background: linear-gradient(135deg, var(--timing-warning)10, transparent);
+}
+
+.summary-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.summary-card-icon {
+  font-size: 1.2rem;
+}
+
+.summary-card-title {
+  font-weight: 600;
+  color: var(--timing-text-muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summary-card-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--timing-text);
+}
+
+/* Breakdown Tabs */
+.timing-breakdown {
+  margin-bottom: 2rem;
+}
+
+.breakdown-tabs {
+  border: 1px solid var(--timing-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tab-buttons {
+  display: flex;
+  background: var(--timing-bg-secondary);
+  border-bottom: 1px solid var(--timing-border);
+}
+
+.tab-button {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+  background: var(--timing-bg-primary);
+}
+
+.tab-button.active {
+  background: white;
+  color: var(--timing-primary);
+  border-bottom: 2px solid var(--timing-primary);
+}
+
+.tab-contents {
+  padding: 1rem;
+  min-height: 200px;
+}
+
+/* Data Tables */
+.timing-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+
+.timing-data-table th,
+.timing-data-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--timing-border);
+}
+
+.timing-data-table th {
+  background: var(--timing-bg-secondary);
+  font-weight: 600;
+  color: var(--timing-text);
+}
+
+.timing-data-table tr:hover {
+  background: var(--timing-bg-primary);
+}
+
+.app-name, .category-name {
+  font-weight: 500;
+}
+
+.time-value {
+  font-family: monospace;
+  color: var(--timing-primary);
+}
+
+.percentage-value {
+  font-weight: 500;
+  color: var(--timing-success);
+}
+
+.sessions-count, .activities-count {
+  text-align: center;
+  color: var(--timing-text-muted);
+}
+
+/* Timeline */
+.timeline-container {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.timeline-item {
+  padding: 0.75rem;
+  background: var(--timing-bg-primary);
+  border-radius: 6px;
+  border-left: 3px solid var(--timing-primary);
+}
+
+.timeline-time {
+  font-family: monospace;
+  font-weight: 600;
+  color: var(--timing-primary);
+  margin-bottom: 0.25rem;
+}
+
+.timeline-details {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.timeline-app {
+  font-weight: 500;
+  background: var(--timing-primary);
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+}
+
+.timeline-category {
+  background: var(--timing-warning);
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+}
+
+.timeline-title {
+  font-size: 0.85rem;
+  color: var(--timing-text-muted);
+  font-style: italic;
+}
+
+/* Interactive Timeline */
+.interactive-timeline {
+  margin-bottom: 2rem;
+}
+
+.timeline-bar {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  gap: 1px;
+  background: var(--timing-border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.timeline-hour-block {
+  aspect-ratio: 1;
+  background: var(--timing-bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.timeline-hour-block.has-activity {
+  background: var(--timing-primary);
+  opacity: calc(0.3 + 0.7 * var(--intensity, 0.5));
+}
+
+.timeline-hour-block:hover {
+  transform: scale(1.1);
+  z-index: 1;
+}
+
+.hour-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--timing-text);
+}
+
+.timeline-hour-block.has-activity .hour-label {
+  color: white;
+}
+
+/* Modal Actions */
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid var(--timing-border);
+}
+
+.modal-actions button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mod-cancel {
+  background: transparent;
+  border: 1px solid var(--timing-border);
+  color: var(--timing-text);
+}
+
+.mod-cancel:hover {
+  background: var(--timing-bg-primary);
+}
+
+.mod-cta {
+  background: var(--timing-primary);
+  border: 1px solid var(--timing-primary);
+  color: white;
+}
+
+.mod-cta:hover {
+  background: var(--timing-primary);
+  opacity: 0.9;
+}
+
+.mod-secondary {
+  background: var(--timing-bg-secondary);
+  border: 1px solid var(--timing-border);
+  color: var(--timing-text);
+}
+
+.mod-secondary:hover {
+  background: var(--timing-bg-primary);
+}
+
+.no-data-message {
+  text-align: center;
+  color: var(--timing-text-muted);
+  font-style: italic;
+  padding: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .timing-connection-status {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .timing-data-preview-modal {
+    width: 95vw;
+    height: 90vh;
+  }
+
+  .summary-cards-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .tab-buttons {
+    flex-wrap: wrap;
+  }
+
+  .tab-button {
+    min-width: 120px;
+  }
+
+  .timeline-bar {
+    grid-template-columns: repeat(12, 1fr);
+  }
+
+  .timeline-hour-block:nth-child(n+13) {
+    display: none;
+  }
+}
+
+/* Setup Wizard Modal */
+.timing-setup-wizard {
+  width: 90vw !important;
+  max-width: 1000px !important;
+  height: 85vh !important;
+  max-height: 700px !important;
+  min-width: 700px !important;
+  min-height: 500px !important;
+}
+
+.wizard-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.wizard-subtitle {
+  color: var(--timing-text-muted);
+  margin: 0.5rem 0 0 0;
+}
+
+/* Progress Indicator */
+.wizard-progress {
+  margin-bottom: 2rem;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--timing-bg-secondary);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--timing-primary);
+  transition: width 0.3s ease;
+}
+
+.step-indicators {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.step-indicator {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+
+.step-indicator .step-icon,
+.step-indicator .step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--timing-bg-secondary);
+  color: var(--timing-text-muted);
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.step-indicator.completed .step-icon {
+  background: var(--timing-success);
+  color: white;
+}
+
+.step-indicator.current .step-number {
+  background: var(--timing-primary);
+  color: white;
+}
+
+.step-label {
+  font-size: 0.75rem;
+  color: var(--timing-text-muted);
+  font-weight: 500;
+}
+
+.step-indicator.current .step-label {
+  color: var(--timing-primary);
+  font-weight: 600;
+}
+
+.optional-badge {
+  display: block;
+  font-size: 0.6rem;
+  color: var(--timing-warning);
+  font-style: italic;
+  margin-top: 0.2rem;
+}
+
+/* Step Content */
+.wizard-step-container {
+  flex: 1;
+  margin-bottom: 2rem;
+  overflow-y: auto;
+}
+
+.wizard-step {
+  min-height: 300px;
+}
+
+.step-header {
+  margin-bottom: 1.5rem;
+}
+
+.step-description {
+  color: var(--timing-text-muted);
+  margin: 0.5rem 0 0 0;
+}
+
+.step-content {
+  padding: 0 1rem;
+}
+
+/* Welcome Step */
+.welcome-step {
+  text-align: center;
+}
+
+.welcome-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.benefits-list,
+.requirements {
+  text-align: left;
+  margin: 1.5rem 0;
+  background: var(--timing-bg-primary);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.benefits-list ul,
+.requirements ul {
+  margin: 0.5rem 0 0 1rem;
+}
+
+.benefits-list li,
+.requirements li {
+  margin: 0.5rem 0;
+}
+
+/* Timing Detection Step */
+.timing-detection-step {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.status-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--timing-bg-primary);
+  border-radius: 8px;
+  border-left: 4px solid var(--timing-primary);
+}
+
+.status-icon {
+  font-size: 2rem;
+}
+
+.status-text h3 {
+  margin: 0 0 0.5rem 0;
+}
+
+.status-text p {
+  margin: 0;
+  color: var(--timing-text-muted);
+}
+
+.manual-config {
+  background: var(--timing-bg-secondary);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+/* Permissions Step */
+.permissions-step {
+  text-align: center;
+}
+
+.step-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.permissions-instructions {
+  text-align: left;
+  background: var(--timing-bg-primary);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.instruction-list {
+  margin: 1rem 0;
+  padding-left: 1rem;
+}
+
+.instruction-list li {
+  margin: 0.75rem 0;
+  line-height: 1.4;
+}
+
+.test-permissions {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+/* Daily Notes & Preferences Steps */
+.daily-notes-step,
+.preferences-step {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* Complete Step */
+.complete-step {
+  text-align: center;
+}
+
+.completion-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.completion-message {
+  font-size: 1.1rem;
+  color: var(--timing-text-muted);
+  margin: 1rem 0;
+}
+
+.next-steps {
+  text-align: left;
+  background: var(--timing-bg-primary);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 2rem;
+}
+
+.next-steps ul {
+  margin: 0.5rem 0 0 1rem;
+}
+
+.next-steps li {
+  margin: 0.75rem 0;
+}
+
+/* Navigation */
+.wizard-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--timing-border);
+}
+
+.wizard-navigation button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 100px;
+}
+
+.wizard-navigation button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive Design for Wizard */
+@media (max-width: 768px) {
+  .timing-setup-wizard {
+    width: 95vw;
+    height: 90vh;
+  }
+
+  .step-indicators {
+    flex-wrap: wrap;
+  }
+
+  .step-indicator {
+    min-width: 80px;
+  }
+
+  .wizard-navigation {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .wizard-navigation button {
+    min-width: 120px;
+  }
+}
+
+/* Timing Data View */
+.timing-data-view {
+  padding: 1rem;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Empty State */
+.timing-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  text-align: center;
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.timing-empty-state h3 {
+  margin: 0.5rem 0;
+  color: var(--timing-text);
+}
+
+.timing-empty-state p {
+  margin: 0;
+  color: var(--timing-text-muted);
+}
+
+/* View Header */
+.timing-view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--timing-border);
+}
+
+.timing-view-title-section {
+  flex: 1;
+}
+
+.timing-view-title {
+  margin: 0 0 0.5rem 0;
+  color: var(--timing-text);
+}
+
+.timing-view-subtitle {
+  margin: 0;
+  color: var(--timing-text-muted);
+  font-size: 0.9rem;
+}
+
+.timing-view-header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.timing-refresh-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* View Content */
+.timing-view-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Summary Section */
+.timing-view-summary h3 {
+  margin: 0 0 1rem 0;
+  color: var(--timing-text);
+}
+
+.timing-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.timing-summary-card {
+  background: var(--timing-bg-primary);
+  border: 1px solid var(--timing-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.2s ease;
+}
+
+.timing-summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.timing-summary-card-primary {
+  border-color: var(--timing-primary);
+  background: linear-gradient(135deg, var(--timing-primary)10, transparent);
+}
+
+.timing-summary-card-secondary {
+  border-color: var(--timing-neutral);
+}
+
+.timing-summary-card-success {
+  border-color: var(--timing-success);
+  background: linear-gradient(135deg, var(--timing-success)10, transparent);
+}
+
+.timing-summary-card-accent {
+  border-color: var(--timing-warning);
+  background: linear-gradient(135deg, var(--timing-warning)10, transparent);
+}
+
+.timing-summary-card-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.timing-summary-card-content {
+  flex: 1;
+}
+
+.timing-summary-card-title {
+  font-size: 0.85rem;
+  color: var(--timing-text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.timing-summary-card-value {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--timing-text);
+}
+
+/* Tabbed Section */
+.timing-view-tabbed-section {
+  background: white;
+  border: 1px solid var(--timing-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.timing-tab-nav {
+  display: flex;
+  background: var(--timing-bg-secondary);
+  border-bottom: 1px solid var(--timing-border);
+}
+
+.timing-tab-btn {
+  flex: 1;
+  padding: 1rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  color: var(--timing-text-muted);
+}
+
+.timing-tab-btn:hover {
+  background: var(--timing-bg-primary);
+  color: var(--timing-text);
+}
+
+.timing-tab-btn.active {
+  background: white;
+  color: var(--timing-primary);
+  border-bottom: 2px solid var(--timing-primary);
+  font-weight: 600;
+}
+
+.timing-tab-content {
+  padding: 1.5rem;
+  min-height: 300px;
+}
+
+/* Tab Content Styles */
+.timing-applications-tab,
+.timing-categories-tab {
+  width: 100%;
+}
+
+.timing-timeline-tab {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.timing-visual-timeline-tab {
+  text-align: center;
+}
+
+.visual-timeline-bar {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  gap: 2px;
+  background: var(--timing-border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 1rem 0;
+  padding: 2px;
+}
+
+.visual-timeline-bar .timeline-hour-block {
+  aspect-ratio: 1;
+  background: var(--timing-bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 2px;
+}
+
+.visual-timeline-bar .timeline-hour-block.has-activity {
+  background: var(--timing-primary);
+  opacity: calc(0.3 + 0.7 * var(--intensity, 0.5));
+}
+
+.visual-timeline-bar .timeline-hour-block:hover {
+  transform: scale(1.1);
+  z-index: 1;
+}
+
+.visual-timeline-bar .hour-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--timing-text);
+}
+
+.visual-timeline-bar .timeline-hour-block.has-activity .hour-label {
+  color: white;
+}
+
+/* Actions */
+.timing-view-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--timing-border);
+}
+
+.timing-view-actions button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* No Data States */
+.no-data {
+  text-align: center;
+  color: var(--timing-text-muted);
+  font-style: italic;
+  padding: 2rem;
+  margin: 0;
+}
+
+/* Responsive Design for View */
+@media (max-width: 768px) {
+  .timing-data-view {
+    padding: 0.5rem;
+  }
+
+  .timing-summary-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .timing-tab-nav {
+    flex-wrap: wrap;
+  }
+
+  .timing-tab-btn {
+    min-width: 120px;
+  }
+
+  .visual-timeline-bar {
+    grid-template-columns: repeat(12, 1fr);
+  }
+
+  .timing-view-actions {
+    flex-direction: column;
+  }
+}
