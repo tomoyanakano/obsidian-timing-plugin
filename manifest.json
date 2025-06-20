@@ -1,10 +1,11 @@
 {
-	"id": "timing-plugin",
-	"name": "Timing Plugin",
-	"version": "0.1.0",
+	"id": "obsidian-timing-plugin",
+	"name": "Timing Integration",
+	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Integrates Obsidian with Timing app for automatic time tracking",
-	"author": "",
-	"authorUrl": "",
-	"isDesktopOnly": false
+	"description": "Integrate macOS Timing app with Obsidian for automatic time tracking in Daily and Weekly Notes. Features timeline visualization, productivity analytics, and seamless workflow integration.",
+	"author": "Claude Code Assistant",
+	"authorUrl": "https://github.com/anthropics/claude-code",
+	"isDesktopOnly": true,
+	"fundingUrl": "https://github.com/sponsors/obsidian-timing-plugin"
 }

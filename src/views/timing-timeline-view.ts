@@ -15,10 +15,12 @@ export class TimingTimelineView extends ItemView {
 		detailed: { level: 3.0, name: "Detailed" },
 		"ultra-detailed": { level: 6.0, name: "Ultra" }
 	};
+	private plugin: any;
 
-	constructor(leaf: WorkspaceLeaf, settings: TimingPluginSettings) {
+	constructor(leaf: WorkspaceLeaf, settings: TimingPluginSettings, plugin?: any) {
 		super(leaf);
 		this.settings = settings;
+		this.plugin = plugin;
 		this.loadZoomSettings();
 	}
 
@@ -51,7 +53,9 @@ export class TimingTimelineView extends ItemView {
 
 	setDate(date: Date) {
 		this.selectedDate = date;
-		this.refreshView();
+		this.loadDataForSelectedDate().then(() => {
+			this.refreshView();
+		});
 	}
 
 	updateSettings(settings: TimingPluginSettings) {
@@ -94,8 +98,9 @@ export class TimingTimelineView extends ItemView {
 			text: "←", 
 			cls: "timing-nav-btn" 
 		});
-		prevBtn.onclick = () => {
+		prevBtn.onclick = async () => {
 			this.selectedDate.setDate(this.selectedDate.getDate() - 1);
+			await this.loadDataForSelectedDate();
 			this.refreshView();
 		};
 
@@ -108,8 +113,9 @@ export class TimingTimelineView extends ItemView {
 			text: "→", 
 			cls: "timing-nav-btn" 
 		});
-		nextBtn.onclick = () => {
+		nextBtn.onclick = async () => {
 			this.selectedDate.setDate(this.selectedDate.getDate() + 1);
+			await this.loadDataForSelectedDate();
 			this.refreshView();
 		};
 
@@ -570,6 +576,38 @@ export class TimingTimelineView extends ItemView {
 		}
 	}
 
+	private async loadDataForSelectedDate(): Promise<void> {
+		try {
+			const dateStr = this.selectedDate.toISOString().split('T')[0];
+			
+			// Use plugin instance if available, otherwise fallback to global access
+			const plugin = this.plugin || (this.app as any).plugins.plugins['obsidian-timing-plugin'];
+			
+			if (plugin && plugin.timingDataCache) {
+				let timingData = await plugin.timingDataCache.getDailyData(dateStr);
+				
+				if (!timingData && plugin.timingIntegration) {
+					// Fetch fresh data if not in cache
+					console.log(`Loading fresh data for ${dateStr}...`);
+					timingData = await plugin.timingIntegration.getTimeDataForDate(this.selectedDate);
+					await plugin.timingDataCache.setDailyData(dateStr, timingData, true);
+					console.log(`Loaded ${timingData.entries.length} entries for ${dateStr}`);
+				} else if (timingData) {
+					console.log(`Using cached data for ${dateStr}: ${timingData.entries.length} entries`);
+				}
+				
+				this.currentData = timingData;
+			} else {
+				// Fallback: clear data if no plugin access
+				console.warn('No plugin instance available for data loading');
+				this.currentData = null;
+			}
+		} catch (error) {
+			console.error('Failed to load data for selected date:', error);
+			this.currentData = null;
+		}
+	}
+
 	private adjustZoom(delta: number) {
 		const newZoom = Math.max(0.3, Math.min(10, this.zoomLevel + delta));
 		this.setZoom(newZoom);
@@ -609,12 +647,26 @@ export class TimingTimelineView extends ItemView {
 	}
 
 	private getAppColor(appName: string): string {
-		// Predefined solid colors for better visibility
+		// More diverse and distinguishable color palette
 		const colors = [
-			'#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
-			'#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
-			'#F8C471', '#82E0AA', '#F1948A', '#85929E', '#A569BD',
-			'#5DADE2', '#58D68D', '#F4D03F', '#EB984E', '#85C1E9'
+			// Blues
+			'#3498DB', '#2980B9', '#5DADE2', '#85C1E9', '#AED6F1',
+			// Greens
+			'#2ECC71', '#27AE60', '#58D68D', '#82E0AA', '#A9DFBF',
+			// Purples
+			'#9B59B6', '#8E44AD', '#BB8FCE', '#D2B4DE', '#E8DAEF',
+			// Oranges
+			'#F39C12', '#E67E22', '#F8C471', '#FAD7A0', '#FDEBD0',
+			// Teals/Cyans
+			'#1ABC9C', '#16A085', '#48C9B0', '#76D7C4', '#A3E4D7',
+			// Yellows
+			'#F1C40F', '#F39C12', '#F7DC6F', '#F9E79F', '#FCF3CF',
+			// Indigos
+			'#6C5CE7', '#5F3DC4', '#A29BFE', '#B2BFEF', '#DDD6FE',
+			// Pinks (limited)
+			'#E91E63', '#EC407A', '#F48FB1', '#F8BBD9',
+			// Additional unique colors
+			'#34495E', '#7F8C8D', '#95A5A6', '#BDC3C7'
 		];
 		
 		// Hash app name to get consistent color

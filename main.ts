@@ -4,6 +4,8 @@ import { TimingIntegration } from "./src/timing-integration";
 import { CacheManager, TimingDataCache } from "./src/cache-manager";
 import { DailyNoteManager } from "./src/daily-note-manager";
 import { TimingSectionManager } from "./src/timing-section-manager";
+import { WeeklyNoteManager } from "./src/weekly-note-manager";
+import { WeeklySectionManager } from "./src/weekly-section-manager";
 import { SetupWizardModal } from "./src/modals/setup-wizard-modal";
 import { DatePickerModal } from "./src/modals/date-picker-modal";
 import {
@@ -29,6 +31,14 @@ const DEFAULT_SETTINGS: TimingPluginSettings = {
 	groupBy: "both",
 	timeFormat: "24h",
 	minimumDuration: 60, // 1 minute in seconds
+	// Weekly Notes settings
+	enableWeeklyNotes: true,
+	weeklyNotesFolder: "Weekly",
+	weeklyDateFormat: "YYYY-[W]WW",
+	autoCreateWeeklyNotes: true,
+	weekStartsOn: "monday",
+	includeWeeklySummary: true,
+	includeWeeklyReflection: true,
 };
 
 export default class TimingPlugin extends Plugin {
@@ -38,6 +48,8 @@ export default class TimingPlugin extends Plugin {
 	timingDataCache: TimingDataCache;
 	dailyNoteManager: DailyNoteManager;
 	timingSectionManager: TimingSectionManager;
+	weeklyNoteManager: WeeklyNoteManager;
+	weeklySectionManager: WeeklySectionManager;
 	dataTransformer: DataTransformer;
 	ribbonIconEl: HTMLElement;
 	statusBarItemEl: HTMLElement;
@@ -56,7 +68,7 @@ export default class TimingPlugin extends Plugin {
 		// Register the timeline view
 		this.registerView(
 			TIMING_TIMELINE_VIEW_TYPE,
-			(leaf) => new TimingTimelineView(leaf, this.settings),
+			(leaf) => new TimingTimelineView(leaf, this.settings, this),
 		);
 
 		// Initialize core components
@@ -68,6 +80,8 @@ export default class TimingPlugin extends Plugin {
 			this.app,
 			this.settings,
 		);
+		this.weeklyNoteManager = new WeeklyNoteManager(this.app, this.settings);
+		this.weeklySectionManager = new WeeklySectionManager(this.app, this.settings);
 		this.dataTransformer = new DataTransformer();
 
 		// Setup UI elements
@@ -115,6 +129,8 @@ export default class TimingPlugin extends Plugin {
 		// Update managers with new settings
 		this.dailyNoteManager?.updateSettings(this.settings);
 		this.timingSectionManager?.updateSettings(this.settings);
+		this.weeklyNoteManager?.updateSettings(this.settings);
+		this.weeklySectionManager?.updateSettings(this.settings);
 
 		// Update timing data views with new settings
 		const timingViews = this.app.workspace.getLeavesOfType(
@@ -250,6 +266,39 @@ export default class TimingPlugin extends Plugin {
 			callback: async () => {
 				// Open view without specific data (empty state)
 				await this.openTimingDataView(null);
+			},
+		});
+
+		// Weekly Notes commands
+		this.addCommand({
+			id: "timing-update-weekly-note",
+			name: "Update current Weekly Note with timing data",
+			callback: async () => {
+				await this.updateCurrentWeeklyNote();
+			},
+		});
+
+		this.addCommand({
+			id: "timing-create-weekly-note",
+			name: "Create Weekly Note with timing section",
+			callback: async () => {
+				await this.createWeeklyNoteWithTiming();
+			},
+		});
+
+		this.addCommand({
+			id: "timing-open-current-week",
+			name: "Open this week's Weekly Note",
+			callback: async () => {
+				await this.openCurrentWeeklyNote();
+			},
+		});
+
+		this.addCommand({
+			id: "timing-sync-weekly-data",
+			name: "Sync weekly timing data",
+			callback: async () => {
+				await this.syncWeeklyData();
 			},
 		});
 	}
@@ -801,6 +850,128 @@ export default class TimingPlugin extends Plugin {
 			view.updateSettings(this.settings);
 		}
 	}
+
+	// Weekly Notes methods
+	async updateCurrentWeeklyNote(): Promise<void> {
+		if (!this.settings.enableWeeklyNotes) {
+			new Notice("Weekly Notes integration is disabled");
+			return;
+		}
+
+		try {
+			await this.updateWeeklyNote(new Date());
+			new Notice("Updated current Weekly Note with timing data");
+		} catch (error) {
+			new Notice(`Failed to update Weekly Note: ${error.message}`);
+		}
+	}
+
+	async createWeeklyNoteWithTiming(): Promise<void> {
+		if (!this.settings.enableWeeklyNotes) {
+			new Notice("Weekly Notes integration is disabled");
+			return;
+		}
+
+		try {
+			const today = new Date();
+			const existingNote = await this.weeklyNoteManager.findWeeklyNote(today);
+			
+			if (existingNote) {
+				new Notice('Weekly Note already exists. Use "Update current Weekly Note" instead.');
+				return;
+			}
+
+			const weeklyNote = await this.weeklyNoteManager.createWeeklyNote(today);
+			await this.updateWeeklyNote(today);
+			await this.app.workspace.getLeaf().openFile(weeklyNote);
+
+			new Notice("Created Weekly Note with timing section");
+		} catch (error) {
+			new Notice(`Failed to create Weekly Note: ${error.message}`);
+		}
+	}
+
+	async openCurrentWeeklyNote(): Promise<void> {
+		if (!this.settings.enableWeeklyNotes) {
+			new Notice("Weekly Notes integration is disabled");
+			return;
+		}
+
+		try {
+			const today = new Date();
+			let weeklyNote = await this.weeklyNoteManager.findWeeklyNote(today);
+
+			if (!weeklyNote && this.settings.autoCreateWeeklyNotes) {
+				weeklyNote = await this.weeklyNoteManager.createWeeklyNote(today);
+			}
+
+			if (weeklyNote) {
+				await this.app.workspace.getLeaf().openFile(weeklyNote);
+			} else {
+				new Notice("Weekly Note not found. Enable auto-creation or create manually.");
+			}
+		} catch (error) {
+			new Notice(`Failed to open Weekly Note: ${error.message}`);
+		}
+	}
+
+	async syncWeeklyData(): Promise<void> {
+		if (!this.settings.enableWeeklyNotes) {
+			new Notice("Weekly Notes integration is disabled");
+			return;
+		}
+
+		try {
+			this.updateStatusBar("Timing: Syncing weekly data...");
+			await this.updateWeeklyNote(new Date());
+			this.updateStatusBar("Timing: ✅ Weekly data synced");
+			new Notice("Weekly timing data synced successfully");
+		} catch (error) {
+			console.error("Weekly sync failed:", error);
+			this.updateStatusBar("Timing: ❌ Weekly sync failed");
+			new Notice(`Weekly sync failed: ${error.message}`);
+		}
+	}
+
+	private async updateWeeklyNote(date: Date): Promise<void> {
+		const weekInfo = this.weeklyNoteManager.getWeekInfo(date);
+		const dailyDataMap = new Map();
+
+		// Collect daily data for the week
+		const currentDate = new Date(weekInfo.weekStart);
+		for (let i = 0; i < 7; i++) {
+			const dateStr = currentDate.toISOString().split('T')[0];
+			
+			try {
+				let dailyData = await this.timingDataCache.getDailyData(dateStr);
+				if (!dailyData) {
+					dailyData = await this.timingIntegration.getTimeDataForDate(currentDate);
+					await this.timingDataCache.setDailyData(dateStr, dailyData, true);
+				}
+				dailyDataMap.set(dateStr, dailyData);
+			} catch (error) {
+				console.warn(`Failed to get data for ${dateStr}:`, error);
+				// Continue with empty data for this day
+			}
+			
+			currentDate.setDate(currentDate.getDate() + 1);
+		}
+
+		// Aggregate weekly data
+		const weeklyData = this.weeklyNoteManager.aggregateWeeklyData(dailyDataMap, weekInfo);
+
+		// Find or create Weekly Note
+		let weeklyNote = await this.weeklyNoteManager.findWeeklyNote(date);
+		if (!weeklyNote && this.settings.autoCreateWeeklyNotes) {
+			weeklyNote = await this.weeklyNoteManager.createWeeklyNote(date);
+		}
+
+		if (weeklyNote) {
+			await this.weeklySectionManager.updateWeeklyTimingSection(weeklyNote, weeklyData);
+		} else {
+			throw new Error("Weekly Note not found and auto-creation is disabled");
+		}
+	}
 }
 
 class TimingSettingTab extends PluginSettingTab {
@@ -829,6 +1000,9 @@ class TimingSettingTab extends PluginSettingTab {
 
 		// Display Settings Section
 		this.addDisplaySettingsSection(containerEl);
+
+		// Weekly Notes Section
+		this.addWeeklyNotesSection(containerEl);
 
 		// Advanced Settings Section
 		this.addAdvancedSettingsSection(containerEl);
@@ -1001,6 +1175,100 @@ class TimingSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.timeFormat)
 					.onChange(async (value) => {
 						this.plugin.settings.timeFormat = value as any;
+						await this.plugin.saveSettings();
+					}),
+			);
+	}
+
+	private addWeeklyNotesSection(containerEl: HTMLElement): void {
+		containerEl.createEl("h3", { text: "Weekly Notes Integration" });
+
+		new Setting(containerEl)
+			.setName("Enable Weekly Notes")
+			.setDesc("Enable automatic Weekly Notes integration")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.enableWeeklyNotes)
+					.onChange(async (value) => {
+						this.plugin.settings.enableWeeklyNotes = value;
+						await this.plugin.saveSettings();
+					}),
+			);
+
+		new Setting(containerEl)
+			.setName("Weekly Notes Folder")
+			.setDesc("Folder for Weekly Notes (leave empty for root)")
+			.addText((text) =>
+				text
+					.setPlaceholder("Weekly")
+					.setValue(this.plugin.settings.weeklyNotesFolder)
+					.onChange(async (value) => {
+						this.plugin.settings.weeklyNotesFolder = value;
+						await this.plugin.saveSettings();
+					}),
+			);
+
+		new Setting(containerEl)
+			.setName("Weekly Date Format")
+			.setDesc("Format for Weekly Note filenames")
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOption("YYYY-[W]WW", "2025-W25 (ISO week)")
+					.addOption("YYYY-MM-DD", "2025-06-16 (week start date)")
+					.addOption("GGGG-[W]WW", "2025-W25 (ISO year-week)")
+					.setValue(this.plugin.settings.weeklyDateFormat)
+					.onChange(async (value) => {
+						this.plugin.settings.weeklyDateFormat = value as any;
+						await this.plugin.saveSettings();
+					}),
+			);
+
+		new Setting(containerEl)
+			.setName("Week Starts On")
+			.setDesc("First day of the week")
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOption("monday", "Monday")
+					.addOption("sunday", "Sunday")
+					.setValue(this.plugin.settings.weekStartsOn)
+					.onChange(async (value) => {
+						this.plugin.settings.weekStartsOn = value as any;
+						await this.plugin.saveSettings();
+					}),
+			);
+
+		new Setting(containerEl)
+			.setName("Auto-create Weekly Notes")
+			.setDesc("Automatically create Weekly Notes if they don't exist")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.autoCreateWeeklyNotes)
+					.onChange(async (value) => {
+						this.plugin.settings.autoCreateWeeklyNotes = value;
+						await this.plugin.saveSettings();
+					}),
+			);
+
+		new Setting(containerEl)
+			.setName("Include Weekly Summary")
+			.setDesc("Include detailed weekly productivity summary")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.includeWeeklySummary)
+					.onChange(async (value) => {
+						this.plugin.settings.includeWeeklySummary = value;
+						await this.plugin.saveSettings();
+					}),
+			);
+
+		new Setting(containerEl)
+			.setName("Include Weekly Reflection")
+			.setDesc("Add a section for weekly time management reflection")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.includeWeeklyReflection)
+					.onChange(async (value) => {
+						this.plugin.settings.includeWeeklyReflection = value;
 						await this.plugin.saveSettings();
 					}),
 			);

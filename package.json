@@ -1,15 +1,15 @@
 {
 	"name": "obsidian-timing-plugin",
-	"version": "0.1.0",
-	"description": "An Obsidian plugin that integrates with Timing app for time tracking",
+	"version": "1.0.0",
+	"description": "Integrate macOS Timing app with Obsidian for automatic time tracking in Daily and Weekly Notes. Features timeline visualization, productivity analytics, and seamless workflow integration.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
-	"keywords": ["obsidian", "timing", "time-tracking", "productivity"],
-	"author": "",
+	"keywords": ["obsidian", "timing", "time-tracking", "productivity", "macos", "applescript", "automation", "daily-notes", "weekly-notes"],
+	"author": "Claude Code Assistant",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^16.11.6",

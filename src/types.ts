@@ -53,6 +53,14 @@ export interface TimingPluginSettings {
 	groupBy: 'application' | 'category' | 'both';
 	timeFormat: '12h' | '24h';
 	minimumDuration: number;
+	// Weekly Notes settings
+	enableWeeklyNotes: boolean;
+	weeklyNotesFolder: string;
+	weeklyDateFormat: 'YYYY-[W]WW' | 'YYYY-MM-DD' | 'GGGG-[W]WW';
+	autoCreateWeeklyNotes: boolean;
+	weekStartsOn: 'monday' | 'sunday';
+	includeWeeklySummary: boolean;
+	includeWeeklyReflection: boolean;
 }
 
 export interface CachedEntry<T = any> {
@@ -118,6 +126,35 @@ export interface TimingSectionInfo {
 }
 
 export interface DailyNoteTemplate {
+	title: string;
+	content: string;
+	timingSectionLocation: 'top' | 'bottom' | 'after-header' | 'custom';
+}
+
+export interface WeeklyTimeData {
+	weekStart: string; // YYYY-MM-DD format
+	weekEnd: string;   // YYYY-MM-DD format
+	weekNumber: number;
+	year: number;
+	dailyData: Map<string, DailyTimeData>; // keyed by date string
+	summary: WeeklySummary;
+}
+
+export interface WeeklySummary {
+	totalTime: number;
+	averageDailyTime: number;
+	byApplication: Map<string, number>;
+	byCategory: Map<string, number>;
+	byDay: Map<string, number>; // keyed by day name (Monday, Tuesday, etc.)
+	mostProductiveDay: string;
+	productivity: {
+		focusTime: number;
+		breakTime: number;
+		meetingTime: number;
+	};
+}
+
+export interface WeeklyNoteTemplate {
 	title: string;
 	content: string;
 	timingSectionLocation: 'top' | 'bottom' | 'after-header' | 'custom';
