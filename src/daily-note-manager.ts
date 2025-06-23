@@ -138,18 +138,39 @@ export class DailyNoteManager {
 
 	private buildDailyNotePath(date: Date, settings: { folder: string; format: string }): string {
 		const dateStr = this.formatDate(date, settings.format);
-		return settings.folder ? `${settings.folder}/${dateStr}.md` : `${dateStr}.md`;
+		return settings.folder ? this.buildNestedPath(settings.folder, date, dateStr) : `${dateStr}.md`;
 	}
 
 	private buildDailyNotePathFromSettings(date: Date): string {
 		const format = this.getFormatForSettings();
 		const dateStr = format.formatter(date);
-		return this.settings.folder ? `${this.settings.folder}/${dateStr}.md` : `${dateStr}.md`;
+		return this.settings.folder ? this.buildNestedPath(this.settings.folder, date, dateStr) : `${dateStr}.md`;
 	}
 
 	private getFormatForSettings(): DateFormat {
 		const formatStr = this.settings.dateFormat;
 		return this.supportedFormats.find(f => f.formatString === formatStr) || this.supportedFormats[0];
+	}
+
+	private buildNestedPath(folderTemplate: string, date: Date, dateStr: string): string {
+		// Support date placeholders in folder paths
+		// Example: "life/daily/{YYYY}/{MM}" -> "life/daily/2025/06"
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const day = String(date.getDate()).padStart(2, '0');
+		
+		let processedFolder = folderTemplate
+			.replace(/{YYYY}/g, year.toString())
+			.replace(/{MM}/g, month)
+			.replace(/{DD}/g, day)
+			.replace(/{YYYY-MM-DD}/g, `${year}-${month}-${day}`)
+			.replace(/{YYYY\/MM\/DD}/g, `${year}/${month}/${day}`)
+			.replace(/{DD-MM-YYYY}/g, `${day}-${month}-${year}`);
+		
+		// Ensure no trailing slash
+		processedFolder = processedFolder.replace(/\/$/, '');
+		
+		return `${processedFolder}/${dateStr}.md`;
 	}
 
 	private generateSearchPaths(date: Date): string[] {
@@ -161,7 +182,7 @@ export class DailyNoteManager {
 			const dateStr = format.formatter(date);
 			
 			for (const folder of commonFolders) {
-				const path = folder ? `${folder}/${dateStr}.md` : `${dateStr}.md`;
+				const path = folder ? this.buildNestedPath(folder, date, dateStr) : `${dateStr}.md`;
 				paths.push(path);
 			}
 		}
@@ -318,8 +339,19 @@ ${timingSection}## Daily Overview
 		try {
 			const dir = this.app.vault.getAbstractFileByPath(dirPath);
 			if (!dir) {
-				await this.app.vault.createFolder(dirPath);
-				console.log('Created directory:', dirPath);
+				// Create nested directories recursively
+				const pathParts = dirPath.split('/').filter(part => part.length > 0);
+				let currentPath = '';
+				
+				for (const part of pathParts) {
+					currentPath = currentPath ? `${currentPath}/${part}` : part;
+					const existingDir = this.app.vault.getAbstractFileByPath(currentPath);
+					
+					if (!existingDir) {
+						await this.app.vault.createFolder(currentPath);
+						console.log('Created directory:', currentPath);
+					}
+				}
 			}
 		} catch (error) {
 			console.warn('Failed to create directory:', dirPath, error);
