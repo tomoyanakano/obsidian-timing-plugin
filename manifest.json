@@ -1,7 +1,7 @@
 {
 	"id": "timing-tracker",
 	"name": "Timing Integration",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"minAppVersion": "0.15.0",
 	"description": "Integrate macOS Timing app for automatic time tracking in Daily and Weekly Notes. Features timeline visualization, productivity analytics, and seamless workflow integration.",
 	"author": "Claude Code Assistant",

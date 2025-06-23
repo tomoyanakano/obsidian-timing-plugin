@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-timing-plugin",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "Integrate macOS Timing app with Obsidian for automatic time tracking in Daily and Weekly Notes. Features timeline visualization, productivity analytics, and seamless workflow integration.",
 	"main": "main.js",
 	"scripts": {
