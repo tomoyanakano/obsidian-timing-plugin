@@ -52,6 +52,7 @@ export default class TimingPlugin extends Plugin {
 	weeklySectionManager: WeeklySectionManager;
 	dataTransformer: DataTransformer;
 	ribbonIconEl: HTMLElement;
+	timelineRibbonIconEl: HTMLElement;
 	statusBarItemEl: HTMLElement;
 	private updateInterval: NodeJS.Timeout | null = null;
 	private timelineView: TimingTimelineView | null = null;
@@ -161,6 +162,15 @@ export default class TimingPlugin extends Plugin {
 		);
 
 		this.updateRibbonIcon(RibbonIconState.DISABLED);
+
+		// Add timeline ribbon icon
+		this.timelineRibbonIconEl = this.addRibbonIcon(
+			"activity",
+			"Open Timing Timeline",
+			async (evt: MouseEvent) => {
+				await this.openTimelineView();
+			},
+		);
 	}
 
 	private setupStatusBar(): void {
